@@ -5,7 +5,7 @@ namespace ProArch.CodingTest.Invoices
 {
     public class InvoiceRepository
     {
-        public IQueryable<Invoice> Get()
+        public IQueryable<Invoice> Get(int supplierId)
         {
             return new List<Invoice>().AsQueryable();
         }
