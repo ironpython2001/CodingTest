@@ -19,10 +19,10 @@ The business logic is quite straightforward: the total spend is the sum of all t
 
 Therefore, the flow should work as follows:
 
-1. 1)A **SupplierService** returns supplier data, which can be used to understand whether a supplier is external or not
-2. 2)If the supplier is **not external** , invoice data can be retrieved through the **InvoiceRepository** class
-3. 3)If the supplier is external, invoice data can be retrieved through the **ExternalInvoiceService** class
-4. 4) **ExternalInvoiceService** invokes a separate system, which might fail. However, data from this system is regularly backed up in a failover storage. A **FailoverInvoiceService** class gives access to that storage. It is ok to return failover data when **ExternalInvoiceService** fails.
+1. A **SupplierService** returns supplier data, which can be used to understand whether a supplier is external or not
+2. If the supplier is **not external** , invoice data can be retrieved through the **InvoiceRepository** class
+3. If the supplier is external, invoice data can be retrieved through the **ExternalInvoiceService** class
+4. **ExternalInvoiceService** invokes a separate system, which might fail. However, data from this system is regularly backed up in a failover storage. A **FailoverInvoiceService** class gives access to that storage. It is ok to return failover data when **ExternalInvoiceService** fails.
 5. 5)Failover data might be not fresh. A timestamp property indicates when it has been originally stored. If this date is older than a month, it means that it has not been refreshed. In this case, the **GetTotalSpend** method should fail.
 6. 6)When ExternalInvoiceService is offline, usually calls tend to **timeout** , which means that the method takes long to complete. Therefore, after 3 consecutive errors, we want to **bypass** ExternalInvoiceService and go to FailoverInvoiceService **directly** , with the same logic as before. After 1 minute, we can try to re-enable ExternalInvoiceService again.
 
@@ -32,9 +32,9 @@ You can use any framework(s) of your choice.
 
 You can make changes to the following classes:
 
-- --SupplierService
-- --InvoiceRepository
-- --FailoverInvoiceService
+- SupplierService
+- InvoiceRepository
+- FailoverInvoiceService
 
 However, you can&#39;t modify the signature of any methods.
 
