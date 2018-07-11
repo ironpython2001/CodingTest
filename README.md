@@ -1,9 +1,8 @@
 # CodingTest
 The Repository Contains the Coding Test For One Of The Company That asked me to take.
 
-Description:
 
-# Coding test
+# Problem Statement
 
 We want to expose a service that calculates the total spend given a supplier ID.
 
