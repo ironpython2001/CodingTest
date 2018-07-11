@@ -22,8 +22,8 @@ Therefore, the flow should work as follows:
 2. If the supplier is **not external** , invoice data can be retrieved through the **InvoiceRepository** class
 3. If the supplier is external, invoice data can be retrieved through the **ExternalInvoiceService** class
 4. **ExternalInvoiceService** invokes a separate system, which might fail. However, data from this system is regularly backed up in a failover storage. A **FailoverInvoiceService** class gives access to that storage. It is ok to return failover data when **ExternalInvoiceService** fails.
-5. 5)Failover data might be not fresh. A timestamp property indicates when it has been originally stored. If this date is older than a month, it means that it has not been refreshed. In this case, the **GetTotalSpend** method should fail.
-6. 6)When ExternalInvoiceService is offline, usually calls tend to **timeout** , which means that the method takes long to complete. Therefore, after 3 consecutive errors, we want to **bypass** ExternalInvoiceService and go to FailoverInvoiceService **directly** , with the same logic as before. After 1 minute, we can try to re-enable ExternalInvoiceService again.
+5. Failover data might be not fresh. A timestamp property indicates when it has been originally stored. If this date is older than a month, it means that it has not been refreshed. In this case, the **GetTotalSpend** method should fail.
+6. When ExternalInvoiceService is offline, usually calls tend to **timeout** , which means that the method takes long to complete. Therefore, after 3 consecutive errors, we want to **bypass** ExternalInvoiceService and go to FailoverInvoiceService **directly** , with the same logic as before. After 1 minute, we can try to re-enable ExternalInvoiceService again.
 
 ## Rules
 
