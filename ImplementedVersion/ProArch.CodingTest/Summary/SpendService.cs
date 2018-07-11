@@ -7,7 +7,7 @@ namespace ProArch.CodingTest.Summary
     {
         public SpendSummary GetTotalSpend(int supplierId)
         {
-            //Get Supplier (need to change with dependency injection)
+            //Get Supplier (TODO : need to change with dependency injection)
             var supplierService = new ProArch.CodingTest.Suppliers.SupplierService();
             var supplier = supplierService.GetById(supplierId);
 
@@ -15,6 +15,7 @@ namespace ProArch.CodingTest.Summary
             spendSummary.Name = supplier.Name;
             var spendDetails = new List<SpendDetail>();
             
+            //need to implement repository pattern or plug and play pattern to load dynamically
             if(!supplier.IsExternal) //Internal Repository
             {
                 //need to change with dependency injection
