@@ -34,7 +34,6 @@ namespace ProArch.CodingTest.Summary
                         Year= x.Year,
                         TotalSpend = x.TotalSpend
                     }));
-                
             }
             else //External Service
             {
