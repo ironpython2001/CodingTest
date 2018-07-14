@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Unity" Version="5.8.6" />
+    <PackageReference Include="Unity.Interception" Version="5.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ProArch.CodingTest.External\ProArch.CodingTest.External.csproj" />
   </ItemGroup>
 
