@@ -6,12 +6,9 @@ The Repository Contains the Coding Test For One Of The Company That asked me to 
 
 We want to expose a service that calculates the total spend given a supplier ID.
 
-publicclassSpendService
-
+public class SpendService
 {
-
     public SpendSummary GetTotalSpend(int supplierId) { ... }
-
 }
 
 The business logic is quite straightforward: the total spend is the sum of all the invoices, grouped by year. However, some of the suppliers are working with a separate branch of the company, which has its own invoicing platform.
