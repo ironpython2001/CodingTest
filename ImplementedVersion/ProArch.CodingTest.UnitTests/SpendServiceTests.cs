@@ -8,20 +8,28 @@ using ProArch.CodingTest.Summary;
 using Unity;
 using ProArch.CodingTest.ServiceManager;
 using System.Linq;
+using ProArch.CodingTest.Invoices;
 
 namespace ProArch.CodingTest.UnitTests
 {
     [TestClass]
     public class SpendServiceTests
     {
-        private SpendServiceTestSetUp _setUp;
+        private SpendService _spendService;
+        private SupplierService _supplierService;
+
         public SpendServiceTests()
         {
             var container = new UnityContainer();
-            container.RegisterType<ISpendService, SpendService>();
-            container.RegisterType<ISpendServiceManager, SpendServiceManager>();
+            container.RegisterType<IInvoiceRepository, InvoiceRepository>();
             container.RegisterType<ISupplierService, SupplierService>();
-            this._setUp = container.Resolve<SpendServiceTestSetUp>();
+            this._spendService = container.Resolve<SpendService>();
+            this._supplierService = container.Resolve<SupplierService>();
+
+
+            var jsonSuppliersData = File.ReadAllText("SuppliersData.json");
+            this._supplierService.Suppliers = JsonConvert.DeserializeObject<List<Supplier>>(jsonSuppliersData);
+            this._spendService.SupplierService = this._supplierService;
         }
 
         [TestMethod]
@@ -29,8 +37,8 @@ namespace ProArch.CodingTest.UnitTests
         public void InternalSupplierTest()
         {
             //from our test data we know that first supplier is internal 
-            var supplier = this._setUp._supplierService.Suppliers.First();
-            this._setUp.GetInternalSupplierSpendSummary(supplier.Id);
+            var supplier = this._supplierService.Suppliers.First();
+            this._spendService.GetTotalSpend(supplier.Id);
         }
     }
 }
