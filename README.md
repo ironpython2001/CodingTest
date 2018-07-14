@@ -44,3 +44,19 @@ Classes in the **ProArch.CodingTest.External** library cannot be modified – it&#
 Implement the GetTotalSpend method and all the unit tests you believe are worth implementing. When you do it, you should consider the following: SOLID principles, maintainability, testing.
 
 **The finalised solution must build and all the tests must pass, we won&#39;t look at code that doesn&#39;t meet these criteria.**
+
+## Useful URLS:
+
+
+- https://stackoverflow.com/questions/2031824/what-is-the-best-way-to-check-for-internet-connectivity-using-net
+- https://www.morgantechspace.com/2015/07/csharp-check-if-machine-is-online-or-offline.html
+- https://stackoverflow.com/questions/30817661/the-fastest-way-to-check-whether-remote-computer-is-offline
+- https://codereview.stackexchange.com/questions/15626/online-offline-class-manager
+- https://stackoverflow.com/questions/12094024/c-how-to-programmatically-check-a-web-service-is-up-and-running
+- https://stackoverflow.com/questions/12094024/c-how-to-programmatically-check-a-web-service-is-up-and-running
+- https://www.codeproject.com/Articles/988257/Dependency-Injection-using-Unity-container
+- https://msdn.microsoft.com/en-us/library/hh323691(v=vs.100).aspx
+- https://www.c-sharpcorner.com/UploadFile/dacca2/inversion-of-control-using-unity/
+- http://geekswithblogs.net/danielggarcia/archive/2014/01/23/introduction-to-dependency-injection-with-unity.aspx
+- https://www.c-sharpcorner.com/UploadFile/dacca2/understand-dependency-injection-property-injection/
+- http://www.tutorialsteacher.com/ioc/property-injection-using-unity-container
