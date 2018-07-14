@@ -11,16 +11,14 @@ namespace ProArch.CodingTest.UnitTests
     public class SpendServiceTestSetUp
     {
         private ISpendService _spendService;
-        public List<Supplier> SuppliersData { get; set; }
+        public ISupplierService _supplierService;
         
-        public SpendServiceTestSetUp(ISpendService spendService)
+        public SpendServiceTestSetUp(ISupplierService supplierService, ISpendService spendService)
         {
-       
             this._spendService = spendService;
-
-
-            var testData = File.ReadAllText("TestData.json");
-            this.SuppliersData = JsonConvert.DeserializeObject<List<Supplier>>(testData);
+            this._supplierService = supplierService;
+            var jsonSuppliersData = File.ReadAllText("SuppliersData.json");
+            this._supplierService.Suppliers = JsonConvert.DeserializeObject<List<Supplier>>(jsonSuppliersData);
 
         }
 

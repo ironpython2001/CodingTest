@@ -3,20 +3,17 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 using ProArch.CodingTest.Summary;
+using ProArch.CodingTest.Interfaces;
 
 namespace ProArch.CodingTest.ServiceManager
 {
-    internal class SpendServiceManager
+    public class SpendServiceManager: ISpendServiceManager
     {
         private int _supplierId;
 
-        public SpendServiceManager(int suppierId)
+        public SpendSummary GetTotalSpend(int suppierId)
         {
             this._supplierId = suppierId;
-        }
-
-        public SpendSummary GetTotalSpend()
-        {
             //Get Supplier (TODO : need to change with dependency injection)
             var supplierService = new ProArch.CodingTest.Suppliers.SupplierService();
             var supplier = supplierService.GetById(this._supplierId);
