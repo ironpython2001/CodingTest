@@ -1,0 +1,32 @@
+﻿[
+  {
+    "supplierId": 1,
+    "invoiceDate": "2018-01-01T00:00:00",
+    "amount": 100.0
+  },
+  {
+    "supplierId": 1,
+    "invoiceDate": "2018-01-01T00:00:00",
+    "amount": 100.0
+  },
+  {
+    "supplierId": 1,
+    "invoiceDate": "2017-01-01T00:00:00",
+    "amount": 100.0
+  },
+  {
+    "supplierId": 1,
+    "invoiceDate": "2017-01-01T00:00:00",
+    "amount": 100.0
+  },
+  {
+    "supplierId": 2,
+    "invoiceDate": "2018-01-01T00:00:00",
+    "amount": 100.0
+  },
+  {
+    "supplierId": 2,
+    "invoiceDate": "2018-01-01T00:00:00",
+    "amount": 100.0
+  }
+]

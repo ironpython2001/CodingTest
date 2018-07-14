@@ -3,5 +3,10 @@
     "id": 1,
     "name": "supplier1",
     "isExternal": false
+  },
+  {
+    "id": 2,
+    "name": "supplier2",
+    "isExternal": false
   }
 ]

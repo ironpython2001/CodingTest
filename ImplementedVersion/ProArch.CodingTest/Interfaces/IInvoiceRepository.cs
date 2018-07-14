@@ -8,6 +8,6 @@ namespace ProArch.CodingTest.Interfaces
 {
     public interface IInvoiceRepository
     {
-        IQueryable<Invoice> Get(int supplierId);
+        IEnumerable<Invoice> Get(int supplierId);
     }
 }
