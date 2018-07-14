@@ -7,6 +7,8 @@ using Unity;
 using ProArch.CodingTest.Suppliers;
 using ProArch.CodingTest.External;
 using ProArch.CodingTest.Extensions;
+using System;
+using System.Threading;
 
 namespace ProArch.CodingTest.Summary
 {
@@ -26,11 +28,20 @@ namespace ProArch.CodingTest.Summary
         }
 
         private SpendSummary spendSummary;
+        private ExternalInvoiceServiceManager externalInvoiceServiceManager;
+        Timer tm = null;
+        AutoResetEvent _autoEvent = null;
+        private static int consecutiveErrors=0;
 
         public SpendService()
         {
-            
+            this.externalInvoiceServiceManager = new ExternalInvoiceServiceManager();
+            this.externalInvoiceServiceManager.EventExternalInvoiceServiceFailed += ExternalInvoiceServiceManager_EventExternalInvoiceServiceFailed;
+            this.externalInvoiceServiceManager.EventDataNotRefreshed += ExternalInvoiceServiceManager_EventDataNotRefreshed;
+            this.externalInvoiceServiceManager.EventSuccess += ExternalInvoiceServiceManager_EventSuccess;
         }
+
+       
 
         public SpendSummary GetTotalSpend(int supplierId)
         {
@@ -42,47 +53,51 @@ namespace ProArch.CodingTest.Summary
             }
             else //External Service
             {
-                this.spendSummary = this.GetSpendSummaryFromExternalService(supplier);
+                this.externalInvoiceServiceManager.TryGetSpendSummaryFromExternalService();
             }
             return this.spendSummary;
         }
 
-        
-
-        private SpendSummary GetSpendSummaryFromExternalService(Supplier supplier)
+        private void ExternalInvoiceServiceManager_EventExternalInvoiceServiceFailed(object sender, System.EventArgs e)
         {
-            var spendSummary = new SpendSummary() { Years = new List<SpendDetail>() };
-            spendSummary.Name = supplier.Name;
-            var spendDetails = new List<SpendDetail>();
-
-            ExternalInvoice[] invoices=null;
-            
-            try
+            consecutiveErrors = consecutiveErrors + 1;
+            if(consecutiveErrors>3)
             {
-                invoices = ExternalInvoiceService.GetInvoices(supplier.Id.ToString());
+                this.externalInvoiceServiceManager.TryGetSpendSummaryFromFailoverService();
             }
-            catch // external service failed
+            else
             {
-                invoices = null;
+                this.externalInvoiceServiceManager.TryGetSpendSummaryFromExternalService();
             }
-
-            var result = invoices.GroupBy(x => x.Year)
-                                .Select(g => new
-                                {
-                                    Year = g.Key,
-                                    TotalSpend = g.Sum(x => x.TotalAmount)
-                                }).ToList();
-
-                result.ForEach(x => spendSummary.Years.Add(
-                    new SpendDetail()
-                    {
-                        Year = x.Year,
-                        TotalSpend = x.TotalSpend
-                    }));
-           
-            return spendSummary;
         }
 
+        private void ExternalInvoiceServiceManager_EventDataNotRefreshed(object sender, System.EventArgs e)
+        {
+            consecutiveErrors = consecutiveErrors + 1;
+            if(consecutiveErrors>6)
+            {
+                _autoEvent = new AutoResetEvent(false);
+                tm = new Timer(Execute, _autoEvent, 1000, 1000);
+
+
+            }
+            else
+            {
+                this.externalInvoiceServiceManager.TryGetSpendSummaryFromFailoverService();
+            }
+        }
+
+        public void Execute(Object stateInfo)
+        {
+           this.externalInvoiceServiceManager.TryGetSpendSummaryFromExternalService();
+           tm.Dispose();
+        }
+
+
+        private void ExternalInvoiceServiceManager_EventSuccess(object sender, EventArgs e)
+        {
+            this.spendSummary= this.externalInvoiceServiceManager.spendSummary;
+        }
 
     }
 }
