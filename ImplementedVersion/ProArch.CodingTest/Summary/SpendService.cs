@@ -5,6 +5,8 @@ using ProArch.CodingTest.Interfaces;
 using Unity.Attributes;
 using Unity;
 using ProArch.CodingTest.Suppliers;
+using ProArch.CodingTest.External;
+using ProArch.CodingTest.Extensions;
 
 namespace ProArch.CodingTest.Summary
 {
@@ -23,6 +25,8 @@ namespace ProArch.CodingTest.Summary
             get; set;
         }
 
+        private SpendSummary spendSummary;
+
         public SpendService()
         {
             
@@ -32,36 +36,37 @@ namespace ProArch.CodingTest.Summary
         {
             var supplier = this.supplierService.GetById(supplierId);
 
-            var spendSummary = new SpendSummary() { Years=new List<SpendDetail>()};
-            spendSummary.Name = supplier.Name;
-            var spendDetails = new List<SpendDetail>();
-
-            //need to implement repository pattern or plug and play pattern to load dynamically
             if (!supplier.IsExternal) //Internal Repository
             {
-                var invoices = this.invoiceRepository.Get(supplier.Id);
-
-                //sum with group by year
-                var result = invoices.GroupBy(x => x.InvoiceDate.Year)
-                                .Select(g => new
-                                {
-                                    Year = g.Key,
-                                    TotalSpend = g.Sum(x => x.Amount)
-                                }).ToList();
-
-                result.ForEach(x => spendSummary.Years.Add(
-                    new SpendDetail()
-                    {
-                        Year = x.Year,
-                        TotalSpend = x.TotalSpend
-                    }));
+                this.spendSummary= supplier.SpendSummary(this.invoiceRepository);
             }
             else //External Service
             {
-                //need to change with dependency injection and repository pattern
-                var externalInvoices = ProArch.CodingTest.External.ExternalInvoiceService.GetInvoices(supplier.Id.ToString());
-                //sum with group by year
-                var result = externalInvoices.GroupBy(x => x.Year)
+                this.spendSummary = this.GetSpendSummaryFromExternalService(supplier);
+            }
+            return this.spendSummary;
+        }
+
+        
+
+        private SpendSummary GetSpendSummaryFromExternalService(Supplier supplier)
+        {
+            var spendSummary = new SpendSummary() { Years = new List<SpendDetail>() };
+            spendSummary.Name = supplier.Name;
+            var spendDetails = new List<SpendDetail>();
+
+            ExternalInvoice[] invoices=null;
+            
+            try
+            {
+                invoices = ExternalInvoiceService.GetInvoices(supplier.Id.ToString());
+            }
+            catch // external service failed
+            {
+                invoices = null;
+            }
+
+            var result = invoices.GroupBy(x => x.Year)
                                 .Select(g => new
                                 {
                                     Year = g.Key,
@@ -74,10 +79,10 @@ namespace ProArch.CodingTest.Summary
                         Year = x.Year,
                         TotalSpend = x.TotalSpend
                     }));
-
-
-            }
+           
             return spendSummary;
         }
+
+
     }
 }
