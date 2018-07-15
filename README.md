@@ -59,3 +59,5 @@ Implement the GetTotalSpend method and all the unit tests you believe are worth 
 - http://geekswithblogs.net/danielggarcia/archive/2014/01/23/introduction-to-dependency-injection-with-unity.aspx
 - https://www.c-sharpcorner.com/UploadFile/dacca2/understand-dependency-injection-property-injection/
 - http://www.tutorialsteacher.com/ioc/property-injection-using-unity-container
+- https://github.com/Moq/moq4/wiki/Quickstart
+- https://www.codeproject.com/Articles/796014/KickStart-your-Unit-Testing-using-Moq
