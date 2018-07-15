@@ -9,6 +9,7 @@ using Unity;
 using ProArch.CodingTest.ServiceManager;
 using System.Linq;
 using ProArch.CodingTest.Invoices;
+using Moq;
 
 namespace ProArch.CodingTest.UnitTests
 {
@@ -55,6 +56,7 @@ namespace ProArch.CodingTest.UnitTests
         [Description("External Supplier Test For Supplier2")]
         public void ExternalSupplierTestForSupplier2()
         {
+            //we don't have control on external invoice service. Therefore mock 
             var supplier = this._supplierService.Suppliers.Where(x => x.Id == 2).First();
             var spendSummary = this._spendService.GetTotalSpend(supplier.Id);
 
