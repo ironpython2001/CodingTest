@@ -52,8 +52,8 @@ namespace ProArch.CodingTest.UnitTests
         }
 
         [TestMethod]
-        [Description("Internal Supplier Test For Supplier2")]
-        public void InternalSupplierTestForSupplier2()
+        [Description("External Supplier Test For Supplier2")]
+        public void ExternalSupplierTestForSupplier2()
         {
             var supplier = this._supplierService.Suppliers.Where(x => x.Id == 2).First();
             var spendSummary = this._spendService.GetTotalSpend(supplier.Id);

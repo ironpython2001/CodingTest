@@ -16,7 +16,7 @@ namespace ProArch.CodingTest.ServiceManager
     public class ExternalInvoiceServiceManager
     {
 
-        private Supplier supplier;
+        public Supplier supplier { get; set; }
         public SpendSummary spendSummary = new SpendSummary() { Years = new List<SpendDetail>() };
 
         public event EventHandler EventExternalInvoiceServiceFailed;
@@ -42,7 +42,7 @@ namespace ProArch.CodingTest.ServiceManager
             }
             if(invoices==null)
             {
-                EventExternalInvoiceServiceFailed(this, null);
+                EventExternalInvoiceServiceFailed(this, new ServiceManagerArgs() { supplier=this.supplier});
             }
             else
             {
@@ -61,7 +61,7 @@ namespace ProArch.CodingTest.ServiceManager
                         TotalSpend = x.TotalSpend
                     }));
                 #endregion
-                EventSuccess(this, null);
+                EventSuccess(this,  new ServiceManagerArgs() { supplier = this.supplier });
             }
         }
 
@@ -73,7 +73,7 @@ namespace ProArch.CodingTest.ServiceManager
             TimeSpan diff = DateTime.Today - failOverInvoices.Timestamp;
             if (diff.Days > 30)
             {
-                EventDataNotRefreshed(this, null);
+                EventDataNotRefreshed(this, new ServiceManagerArgs() { supplier = this.supplier });
             }
             else
             {
@@ -92,7 +92,7 @@ namespace ProArch.CodingTest.ServiceManager
                         TotalSpend = x.TotalSpend
                     }));
                 #endregion
-                EventSuccess(this, null);
+                EventSuccess(this, new ServiceManagerArgs() { supplier = this.supplier });
             }
         }
 

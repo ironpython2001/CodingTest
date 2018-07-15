@@ -53,6 +53,7 @@ namespace ProArch.CodingTest.Summary
             }
             else //External Service
             {
+                this.externalInvoiceServiceManager.supplier = supplier;
                 this.externalInvoiceServiceManager.TryGetSpendSummaryFromExternalService();
             }
             return this.spendSummary;
