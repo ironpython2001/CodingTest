@@ -13,15 +13,20 @@ using ProArch.CodingTest.Invoices;
 
 namespace ProArch.CodingTest.ServiceManager
 {
-    public class ExternalInvoiceServiceManager
+    public class ExternalInvoiceServiceManager:IExternalInvoiceServiceManager
     {
 
         public Supplier supplier { get; set; }
-        public SpendSummary spendSummary = new SpendSummary() { Years = new List<SpendDetail>() };
+        private SpendSummary _spendSummary = new SpendSummary() { Years = new List<SpendDetail>() };
+        public SpendSummary spendSummary
+        {
+            get { return _spendSummary; }
+            set { _spendSummary = value; }
+        }
 
-        public event EventHandler EventExternalInvoiceServiceFailed;
-        public event EventHandler EventDataNotRefreshed;
-        public event EventHandler EventSuccess;
+        public event EventHandler<ServiceManagerArgs> EventExternalInvoiceServiceFailed;
+        public event EventHandler<ServiceManagerArgs> EventDataNotRefreshed;
+        public event EventHandler<ServiceManagerArgs> EventSuccess;
 
         public ExternalInvoiceServiceManager()
         {
@@ -96,7 +101,6 @@ namespace ProArch.CodingTest.ServiceManager
             }
         }
 
-
-
+       
     }
 }

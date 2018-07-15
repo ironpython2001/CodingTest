@@ -56,11 +56,45 @@ namespace ProArch.CodingTest.UnitTests
         [Description("External Supplier Test For Supplier2")]
         public void ExternalSupplierTestForSupplier2()
         {
-            //we don't have control on external invoice service. Therefore mock 
-            var supplier = this._supplierService.Suppliers.Where(x => x.Id == 2).First();
-            var spendSummary = this._spendService.GetTotalSpend(supplier.Id);
+            //We don't have control on external invoice service. Therefore we are mocking
+            //should not be modified
+            //var supplier = this._supplierService.Suppliers.Where(x => x.Id == 2).First();
+            //var spendSummary = this._spendService.GetTotalSpend(supplier.Id);
+            var mockObj = new Moq.Mock<IExternalInvoiceServiceManager>();
+            var mockSupplier = new Supplier()
+            {
+                Id = 2,
+                IsExternal = true,
+                Name = "supplier2"
+            };
 
+            mockObj.SetupProperty(x => x.supplier, mockSupplier);
+
+            var mockSpendSummary = new SpendSummary()
+            {
+                Name = "supplier2",
+                Years = new List<SpendDetail>()
+                {
+                    new SpendDetail() { Year=2018, TotalSpend=100 },
+                    new SpendDetail() { Year=2018, TotalSpend=100 }
+                }
+            };
+
+            mockObj.SetupProperty(x => x.spendSummary,mockSpendSummary);
+            mockObj.Setup(x => x.TryGetSpendSummaryFromExternalService())
+                    .Raises(x => x.EventSuccess += null, this, new ServiceManagerArgs() { supplier=mockSupplier });
+
+            IExternalInvoiceServiceManager mgr = new ExternalInvoiceServiceManager();
+            mgr.supplier = mockSupplier;
+            mgr.EventSuccess += delegate (object sender, ServiceManagerArgs e) {
+                mockObj.Verify(m => m.spendSummary);
+            };
+
+            mgr.TryGetSpendSummaryFromExternalService();
+            
+            
         }
 
+        
     }
 }
