@@ -1,7 +1,4 @@
 ﻿using ProArch.CodingTest.Summary;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ProArch.CodingTest.Interfaces
 {

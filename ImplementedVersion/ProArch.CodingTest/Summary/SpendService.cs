@@ -1,14 +1,10 @@
-﻿using System.Linq;
-using System.Collections.Generic;
-using ProArch.CodingTest.ServiceManager;
+﻿using ProArch.CodingTest.Extensions;
 using ProArch.CodingTest.Interfaces;
-using Unity.Attributes;
-using Unity;
+using ProArch.CodingTest.ServiceManager;
 using ProArch.CodingTest.Suppliers;
-using ProArch.CodingTest.External;
-using ProArch.CodingTest.Extensions;
 using System;
 using System.Threading;
+using Unity.Attributes;
 
 namespace ProArch.CodingTest.Summary
 {
@@ -38,7 +34,6 @@ namespace ProArch.CodingTest.Summary
             this.externalInvoiceServiceManager = new ExternalInvoiceServiceManager();
             this.externalInvoiceServiceManager.EventExternalInvoiceServiceFailed += ExternalInvoiceServiceManager_EventExternalInvoiceServiceFailed;
             this.externalInvoiceServiceManager.EventDataNotRefreshed += ExternalInvoiceServiceManager_EventDataNotRefreshed;
-            this.externalInvoiceServiceManager.EventSuccess += ExternalInvoiceServiceManager_EventSuccess;
         }
 
        
@@ -54,43 +49,43 @@ namespace ProArch.CodingTest.Summary
             else //External Service
             {
                 this.externalInvoiceServiceManager.supplier = supplier;
-                this.externalInvoiceServiceManager.TryGetSpendSummaryFromExternalService();
+                this.spendSummary= this.externalInvoiceServiceManager.TryGetSpendSummaryFromExternalService(supplier);
             }
             return this.spendSummary;
         }
 
         private void ExternalInvoiceServiceManager_EventExternalInvoiceServiceFailed(object sender, System.EventArgs e)
         {
+            var serviceManagerArgs = e as ServiceManagerArgs;
             consecutiveErrors = consecutiveErrors + 1;
             if(consecutiveErrors>3)
             {
-                this.externalInvoiceServiceManager.TryGetSpendSummaryFromFailoverService();
+                this.spendSummary = this.externalInvoiceServiceManager.TryGetSpendSummaryFromFailoverService(serviceManagerArgs.supplier);
             }
             else
             {
-                this.externalInvoiceServiceManager.TryGetSpendSummaryFromExternalService();
+                this.spendSummary = this.externalInvoiceServiceManager.TryGetSpendSummaryFromExternalService(serviceManagerArgs.supplier);
             }
         }
 
         private void ExternalInvoiceServiceManager_EventDataNotRefreshed(object sender, System.EventArgs e)
         {
+            var serviceManagerArgs = e as ServiceManagerArgs;
             consecutiveErrors = consecutiveErrors + 1;
             if(consecutiveErrors>6)
             {
                 _autoEvent = new AutoResetEvent(false);
                 tm = new Timer(Execute, _autoEvent, 1000, 1000);
-
-
             }
             else
             {
-                this.externalInvoiceServiceManager.TryGetSpendSummaryFromFailoverService();
+                this.spendSummary= this.externalInvoiceServiceManager.TryGetSpendSummaryFromFailoverService(serviceManagerArgs.supplier);
             }
         }
 
         public void Execute(Object stateInfo)
         {
-           this.externalInvoiceServiceManager.TryGetSpendSummaryFromExternalService();
+            this.spendSummary = this.externalInvoiceServiceManager.TryGetSpendSummaryFromExternalService(stateInfo as Supplier);
            tm.Dispose();
         }
 

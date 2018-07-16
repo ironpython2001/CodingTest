@@ -61,3 +61,4 @@ Implement the GetTotalSpend method and all the unit tests you believe are worth 
 - http://www.tutorialsteacher.com/ioc/property-injection-using-unity-container
 - https://github.com/Moq/moq4/wiki/Quickstart
 - https://www.codeproject.com/Articles/796014/KickStart-your-Unit-Testing-using-Moq
+- https://www.codeproject.com/Tips/591564/Mocking-Event-Handlers

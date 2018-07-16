@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
-using ProArch.CodingTest.ServiceManager;
-using ProArch.CodingTest.Interfaces;
-using Unity.Attributes;
-using Unity;
-using ProArch.CodingTest.Suppliers;
-using ProArch.CodingTest.External;
+﻿using ProArch.CodingTest.Interfaces;
 using ProArch.CodingTest.Summary;
+using ProArch.CodingTest.Suppliers;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ProArch.CodingTest.Extensions
 {

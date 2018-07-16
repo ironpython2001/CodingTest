@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using ProArch.CodingTest.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
-using ProArch.CodingTest.Interfaces;
 using Unity.Attributes;
 
 namespace ProArch.CodingTest.Invoices

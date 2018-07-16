@@ -1,15 +1,11 @@
-﻿using System.Linq;
-using System.Collections.Generic;
-using ProArch.CodingTest.ServiceManager;
+﻿using ProArch.CodingTest.External;
 using ProArch.CodingTest.Interfaces;
-using Unity.Attributes;
-using Unity;
-using ProArch.CodingTest.Suppliers;
-using ProArch.CodingTest.External;
-using ProArch.CodingTest.Extensions;
-using ProArch.CodingTest.Summary;
-using System;
 using ProArch.CodingTest.Invoices;
+using ProArch.CodingTest.Summary;
+using ProArch.CodingTest.Suppliers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ProArch.CodingTest.ServiceManager
 {
@@ -17,6 +13,7 @@ namespace ProArch.CodingTest.ServiceManager
     {
 
         public Supplier supplier { get; set; }
+
         private SpendSummary _spendSummary = new SpendSummary() { Years = new List<SpendDetail>() };
         public SpendSummary spendSummary
         {
@@ -26,28 +23,29 @@ namespace ProArch.CodingTest.ServiceManager
 
         public event EventHandler<ServiceManagerArgs> EventExternalInvoiceServiceFailed;
         public event EventHandler<ServiceManagerArgs> EventDataNotRefreshed;
-        public event EventHandler<ServiceManagerArgs> EventSuccess;
+        
 
         public ExternalInvoiceServiceManager()
         {
             
         }
 
-        public void TryGetSpendSummaryFromExternalService()
+        public SpendSummary TryGetSpendSummaryFromExternalService(Supplier theSupplier)
         {
+            var theSpendSummary = new SpendSummary() { Years = new List<SpendDetail>() };
             ExternalInvoice[] invoices = null;
 
             try
             {
-                invoices = ExternalInvoiceService.GetInvoices(supplier.Id.ToString());
+                invoices = ExternalInvoiceService.GetInvoices(theSupplier.Id.ToString());
             }
             catch // external service failed
             {
                 invoices = null;
             }
-            if(invoices==null)
+            if (invoices == null)
             {
-                EventExternalInvoiceServiceFailed(this, new ServiceManagerArgs() { supplier=this.supplier});
+                EventExternalInvoiceServiceFailed(this, new ServiceManagerArgs() { supplier = theSupplier });
             }
             else
             {
@@ -59,26 +57,27 @@ namespace ProArch.CodingTest.ServiceManager
                                            TotalSpend = g.Sum(x => x.TotalAmount)
                                        }).ToList();
 
-                result.ForEach(x => this.spendSummary.Years.Add(
+                result.ForEach(x => theSpendSummary.Years.Add(
                     new SpendDetail()
                     {
                         Year = x.Year,
                         TotalSpend = x.TotalSpend
                     }));
                 #endregion
-                EventSuccess(this,  new ServiceManagerArgs() { supplier = this.supplier });
             }
+            return theSpendSummary;
         }
 
-        public void TryGetSpendSummaryFromFailoverService()
+        public SpendSummary TryGetSpendSummaryFromFailoverService(Supplier theSupplier)
         {
+            var theSpendSummary = new SpendSummary() { Years = new List<SpendDetail>() };
             var failOverService = new FailoverInvoiceService();
-            var failOverInvoices = failOverService.GetInvoices(supplier.Id);
+            var failOverInvoices = failOverService.GetInvoices(theSupplier.Id);
 
             TimeSpan diff = DateTime.Today - failOverInvoices.Timestamp;
             if (diff.Days > 30)
             {
-                EventDataNotRefreshed(this, new ServiceManagerArgs() { supplier = this.supplier });
+                EventDataNotRefreshed(this, new ServiceManagerArgs() { supplier = theSupplier });
             }
             else
             {
@@ -97,10 +96,11 @@ namespace ProArch.CodingTest.ServiceManager
                         TotalSpend = x.TotalSpend
                     }));
                 #endregion
-                EventSuccess(this, new ServiceManagerArgs() { supplier = this.supplier });
             }
+
+            return theSpendSummary;
         }
 
-       
+        
     }
 }

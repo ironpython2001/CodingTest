@@ -1,15 +1,14 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ProArch.CodingTest.Suppliers;
 using Newtonsoft.Json;
-using System.IO;
-using System.Collections.Generic;
 using ProArch.CodingTest.Interfaces;
-using ProArch.CodingTest.Summary;
-using Unity;
-using ProArch.CodingTest.ServiceManager;
-using System.Linq;
 using ProArch.CodingTest.Invoices;
-using Moq;
+using ProArch.CodingTest.ServiceManager;
+using ProArch.CodingTest.Summary;
+using ProArch.CodingTest.Suppliers;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Unity;
 
 namespace ProArch.CodingTest.UnitTests
 {
@@ -56,45 +55,11 @@ namespace ProArch.CodingTest.UnitTests
         [Description("External Supplier Test For Supplier2")]
         public void ExternalSupplierTestForSupplier2()
         {
-            //We don't have control on external invoice service. Therefore we are mocking
-            //should not be modified
-            //var supplier = this._supplierService.Suppliers.Where(x => x.Id == 2).First();
-            //var spendSummary = this._spendService.GetTotalSpend(supplier.Id);
-            var mockObj = new Moq.Mock<IExternalInvoiceServiceManager>();
-            var mockSupplier = new Supplier()
-            {
-                Id = 2,
-                IsExternal = true,
-                Name = "supplier2"
-            };
-
-            mockObj.SetupProperty(x => x.supplier, mockSupplier);
-
-            var mockSpendSummary = new SpendSummary()
-            {
-                Name = "supplier2",
-                Years = new List<SpendDetail>()
-                {
-                    new SpendDetail() { Year=2018, TotalSpend=100 },
-                    new SpendDetail() { Year=2018, TotalSpend=100 }
-                }
-            };
-
-            mockObj.SetupProperty(x => x.spendSummary,mockSpendSummary);
-            mockObj.Setup(x => x.TryGetSpendSummaryFromExternalService())
-                    .Raises(x => x.EventSuccess += null, this, new ServiceManagerArgs() { supplier=mockSupplier });
-
+            var supplier = this._supplierService.Suppliers.Where(x => x.Id == 2).First();
             IExternalInvoiceServiceManager mgr = new ExternalInvoiceServiceManager();
-            mgr.supplier = mockSupplier;
-            mgr.EventSuccess += delegate (object sender, ServiceManagerArgs e) {
-                mockObj.Verify(m => m.spendSummary);
-            };
-
-            mgr.TryGetSpendSummaryFromExternalService();
-            
-            
+            var result = mgr.TryGetSpendSummaryFromExternalService(supplier);
+            Assert.IsTrue(result!=null);
         }
 
-        
     }
 }
