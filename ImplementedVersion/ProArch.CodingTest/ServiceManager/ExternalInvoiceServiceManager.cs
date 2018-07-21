@@ -70,9 +70,6 @@ namespace ProArch.CodingTest.ServiceManager
         public SpendSummary TryGetSpendSummaryFromFailoverService(Supplier theSupplier,FailoverInvoiceCollection failOverInvoices)
         {
             var theSpendSummary = new SpendSummary() { Years = new List<SpendDetail>() };
-            //var failOverService = new FailoverInvoiceService();
-//            var failOverInvoices = failOverService.GetInvoices(theSupplier.Id);
-
             TimeSpan diff = DateTime.Today - failOverInvoices.Timestamp;
             if (diff.Days > 30)
             {
