@@ -1,5 +1,7 @@
 ﻿using ProArch.CodingTest.Extensions;
+using ProArch.CodingTest.External;
 using ProArch.CodingTest.Interfaces;
+using ProArch.CodingTest.Invoices;
 using ProArch.CodingTest.ServiceManager;
 using ProArch.CodingTest.Suppliers;
 using System;
@@ -49,7 +51,7 @@ namespace ProArch.CodingTest.Summary
             else //External Service
             {
                 this.externalInvoiceServiceManager.supplier = supplier;
-                this.spendSummary= this.externalInvoiceServiceManager.TryGetSpendSummaryFromExternalService(supplier);
+                this.spendSummary= this.externalInvoiceServiceManager.TryGetSpendSummaryFromExternalService(supplier, ExternalInvoiceService.GetInvoices);
             }
             return this.spendSummary;
         }
@@ -60,11 +62,13 @@ namespace ProArch.CodingTest.Summary
             consecutiveErrors = consecutiveErrors + 1;
             if(consecutiveErrors>3)
             {
-                this.spendSummary = this.externalInvoiceServiceManager.TryGetSpendSummaryFromFailoverService(serviceManagerArgs.supplier);
+                var failOverService = new FailoverInvoiceService();
+                var failOverInvoices = failOverService.GetInvoices(serviceManagerArgs.supplier.Id);
+                this.spendSummary = this.externalInvoiceServiceManager.TryGetSpendSummaryFromFailoverService(serviceManagerArgs.supplier,failOverInvoices);
             }
             else
             {
-                this.spendSummary = this.externalInvoiceServiceManager.TryGetSpendSummaryFromExternalService(serviceManagerArgs.supplier);
+                this.spendSummary = this.externalInvoiceServiceManager.TryGetSpendSummaryFromExternalService(serviceManagerArgs.supplier, ExternalInvoiceService.GetInvoices);
             }
         }
 
@@ -79,13 +83,15 @@ namespace ProArch.CodingTest.Summary
             }
             else
             {
-                this.spendSummary= this.externalInvoiceServiceManager.TryGetSpendSummaryFromFailoverService(serviceManagerArgs.supplier);
+                var failOverService = new FailoverInvoiceService();
+                var failOverInvoices = failOverService.GetInvoices(serviceManagerArgs.supplier.Id);
+                this.spendSummary= this.externalInvoiceServiceManager.TryGetSpendSummaryFromFailoverService(serviceManagerArgs.supplier,failOverInvoices);
             }
         }
 
         public void Execute(Object stateInfo)
         {
-            this.spendSummary = this.externalInvoiceServiceManager.TryGetSpendSummaryFromExternalService(stateInfo as Supplier);
+            this.spendSummary = this.externalInvoiceServiceManager.TryGetSpendSummaryFromExternalService(stateInfo as Supplier,ExternalInvoiceService.GetInvoices);
            tm.Dispose();
         }
 

@@ -30,14 +30,13 @@ namespace ProArch.CodingTest.ServiceManager
             
         }
 
-        public SpendSummary TryGetSpendSummaryFromExternalService(Supplier theSupplier)
+        public SpendSummary TryGetSpendSummaryFromExternalService(Supplier theSupplier,Func<string,ExternalInvoice[]> externalInvoiceService )
         {
             var theSpendSummary = new SpendSummary() { Years = new List<SpendDetail>() };
             ExternalInvoice[] invoices = null;
-
             try
             {
-                invoices = ExternalInvoiceService.GetInvoices(theSupplier.Id.ToString());
+                invoices = externalInvoiceService.Invoke(theSupplier.Id.ToString()); //ExternalInvoiceService.GetInvoices(theSupplier.Id.ToString());
             }
             catch // external service failed
             {
@@ -68,11 +67,11 @@ namespace ProArch.CodingTest.ServiceManager
             return theSpendSummary;
         }
 
-        public SpendSummary TryGetSpendSummaryFromFailoverService(Supplier theSupplier)
+        public SpendSummary TryGetSpendSummaryFromFailoverService(Supplier theSupplier,FailoverInvoiceCollection failOverInvoices)
         {
             var theSpendSummary = new SpendSummary() { Years = new List<SpendDetail>() };
-            var failOverService = new FailoverInvoiceService();
-            var failOverInvoices = failOverService.GetInvoices(theSupplier.Id);
+            //var failOverService = new FailoverInvoiceService();
+//            var failOverInvoices = failOverService.GetInvoices(theSupplier.Id);
 
             TimeSpan diff = DateTime.Today - failOverInvoices.Timestamp;
             if (diff.Days > 30)
