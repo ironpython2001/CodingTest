@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using Newtonsoft.Json;
 using ProArch.CodingTest.External;
 using ProArch.CodingTest.Interfaces;
