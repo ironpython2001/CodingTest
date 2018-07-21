@@ -114,7 +114,6 @@ namespace ProArch.CodingTest.UnitTests
             var result = mgr.TryGetSpendSummaryFromFailoverService(supplier, failoverInvoices);
             Assert.IsTrue(result != null);
         }
-
     }
 
     
