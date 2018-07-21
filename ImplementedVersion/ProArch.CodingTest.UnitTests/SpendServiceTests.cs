@@ -115,6 +115,4 @@ namespace ProArch.CodingTest.UnitTests
             Assert.IsTrue(result != null);
         }
     }
-
-    
 }
