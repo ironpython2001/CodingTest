@@ -43,7 +43,7 @@ namespace ProArch.CodingTest.UnitTests
 
         [TestMethod]
         [Description("Test For Internal Supplier")]
-        public void InternalSupplierTestForSupplier1()
+        public void Test_InternalSupplier()
         {
             var supplier = this._supplierService.Suppliers.Where(x => x.Id == 1).First();
             var spendSummary = this._spendService.GetTotalSpend(supplier.Id);
@@ -54,8 +54,8 @@ namespace ProArch.CodingTest.UnitTests
         }
 
         [TestMethod]
-        [Description("External Service Is Able To Successfully Get Data.")]
-        public void ExternalSupplierTestForSupplier2()
+        [Description("Test for External Service Is Able To Successfully Get Data.")]
+        public void Test_ExternalSupplier_SucceessfulExternalService()
         {
             var supplier = this._supplierService.Suppliers.Where(x => x.Id == 2).First();
             IExternalInvoiceServiceManager mgr = new ExternalInvoiceServiceManager();
@@ -65,7 +65,7 @@ namespace ProArch.CodingTest.UnitTests
 
         [TestMethod]
         [Description("Test To Identify, External Service Is Failed To Get Data.")]
-        public void ExternalSupplierTestForSupplier3()
+        public void Test_ExternalSupplier_FailedExternalService()
         {
             var supplier = this._supplierService.Suppliers.Where(x => x.Id == 2).First();
             IExternalInvoiceServiceManager mgr = new ExternalInvoiceServiceManager();
@@ -79,7 +79,7 @@ namespace ProArch.CodingTest.UnitTests
 
         [TestMethod]
         [Description("Test To Identify that we are able to get data from failoverservice")]
-        public void ExternalSupplierTestForSupplier4()
+        public void Test_ExternalSupplier_FailOverService_DataRefreshed()
         {
             var supplier = this._supplierService.Suppliers.Where(x => x.Id == 2).First();
             IExternalInvoiceServiceManager mgr = new ExternalInvoiceServiceManager();
@@ -89,6 +89,7 @@ namespace ProArch.CodingTest.UnitTests
                 new ExternalInvoice(){ TotalAmount=100,Year=2018 }
                 ,new ExternalInvoice(){ TotalAmount=100,Year=2018 }
             };
+            //Just to simulate the data is refreshed recently
             failoverInvoices.Timestamp = DateTime.Now;
             var result = mgr.TryGetSpendSummaryFromFailoverService(supplier, failoverInvoices);
             Assert.IsTrue(result != null);
@@ -96,7 +97,7 @@ namespace ProArch.CodingTest.UnitTests
 
         [TestMethod]
         [Description("Test To Identify that we are Not able to get data from failoverservice. The data is older then 30 days")]
-        public void ExternalSupplierTestForSupplier5()
+        public void Test_ExternalSupplier_FailOverService_DataNotRefreshed()
         {
             var supplier = this._supplierService.Suppliers.Where(x => x.Id == 2).First();
             IExternalInvoiceServiceManager mgr = new ExternalInvoiceServiceManager();
@@ -106,7 +107,8 @@ namespace ProArch.CodingTest.UnitTests
                 new ExternalInvoice(){ TotalAmount=100,Year=2018 }
                 ,new ExternalInvoice(){ TotalAmount=100,Year=2018 }
             };
-            failoverInvoices.Timestamp = DateTime.Now.AddMonths(-2);//Just to simulate the data is 2 months old
+            //Just to simulate the data is not refreshed from past 2 months 
+            failoverInvoices.Timestamp = DateTime.Now.AddMonths(-2);
             mgr.EventDataNotRefreshed += delegate (object sender, ServiceManagerArgs e)
             {
                 Assert.IsTrue(e.supplier.Id == 2);
